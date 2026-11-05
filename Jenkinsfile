@@ -1,10 +1,11 @@
+
 pipeline {
     agent any
 
     environment {
-        AWS_REGION = 'ap-south-1'
+        AWS_REGION = 'us-east-1'
         ECR_REPO = 'python-cicd-app'
-        AWS_ACCOUNT_ID = 'YOUR_AWS_ACCOUNT_ID'
+        AWS_ACCOUNT_ID = '030882224407'
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
@@ -20,15 +21,20 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
-                    pip3 install -r requirements.txt
-                    pip3 install pytest
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install -r requirements.txt
+                    pip install pytest
                 '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'python3 -m pytest test_app.py'
+                sh '''
+                    . venv/bin/activate
+                    python -m pytest test_app.py
+                '''
             }
         }
 
@@ -91,3 +97,4 @@ pipeline {
         }
     }
 }
+
